@@ -17,7 +17,10 @@
     ],
     "import/no-extraneous-dependencies": "off",
     "global-require": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "no-param-reassign": "off",
+    "consistent-return": "off",
+    "no-restricted-syntax": "off"
   },
   "ignorePatterns": ["server/client"]
 }
