@@ -18,13 +18,27 @@ const io = new Server(httpServer, {
 
 io.on('connection', (socket) => {
   const users = []
-  for (const [id, s] of io.of('/').sockets) {
+
+  for (const [id, socket] of io.of('/').sockets) {
     users.push({
       userID: id,
-      username: s.username,
+      username: socket.username,
     })
   }
+
   socket.emit('users', users)
+
+  socket.broadcast.emit('user connected', {
+    userID: socket.id,
+    username: socket.username,
+  })
+
+  socket.on('private message', ({ content, to }) => {
+    socket.to(to).emit('private message', {
+      content,
+      from: socket.id,
+    })
+  })
 })
 
 io.use((socket, next) => {
@@ -35,6 +49,7 @@ io.use((socket, next) => {
   }
 
   socket.username = username
+  console.log(socket.handshake.time)
   next()
 })
 

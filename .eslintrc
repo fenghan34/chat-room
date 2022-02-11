@@ -1,26 +1,5 @@
 {
   "root": true,
-  "extends": ["airbnb", "prettier"],
-  "env": {
-    "node": true,
-    "browser": true,
-    "es6": true
-  },
-  "rules": {
-    "react/react-in-jsx-scope": "off",
-    "import/no-unresolved": [
-      "error",
-      {
-        "commonjs": true,
-        "ignore": ["virtual"]
-      }
-    ],
-    "import/no-extraneous-dependencies": "off",
-    "global-require": "off",
-    "no-console": "off",
-    "no-param-reassign": "off",
-    "consistent-return": "off",
-    "no-restricted-syntax": "off"
-  },
+  "extends": ["react-app"],
   "ignorePatterns": ["server/client"]
 }
