@@ -11,7 +11,7 @@ export const initialContext = {
 
 export const useStore = () => useContext(Context)
 
-export const reducer = (state, action) => {
+export const reducer = produce((draft, action) => {
   if (!(action instanceof Object)) {
     throw new Error('invalid dispatch')
   }
@@ -20,66 +20,78 @@ export const reducer = (state, action) => {
 
   switch (type) {
     case 'login':
-      return { ...state, username: payload }
+      draft.username = payload
+      break
     case 'setSelfStatus':
-      return setSelfStatus(state, payload)
+      setSelfStatus(draft, payload)
+      break
     case 'updateUsers':
-      return updateUsers(state, payload)
+      updateUsers(draft, payload)
+      break
     case 'updateSelectedUser':
-      return { ...state, selectedUser: payload }
+      updateSelectedUser(draft, payload)
+      break
     case 'receiveMessage':
-      return receiveMessage(state, payload)
+      receiveMessage(draft, payload)
+      break
     default:
-      throw new Error('invalid dispatch type')
+      throw new Error('invalid action type')
+  }
+})
+
+const setSelfStatus = (draft, payload) => {
+  const selfIndex = draft.users.findIndex((self) => !!self)
+
+  const self = draft.users[selfIndex]
+
+  if (self) {
+    self.connected = payload
   }
 }
 
-const setSelfStatus = (state, payload) => {
-  return produce(state, (draft) => {
-    const selfIndex = draft.users.findIndex((self) => !!self)
+const updateSelectedUser = (draft, payload) => {
+  draft.selectedUser = payload
 
-    const self = draft.users[selfIndex]
-
-    if (self) {
-      self.connected = payload
-    }
-  })
+  if (payload) {
+    const users = draft.users
+    const index = users.findIndex(({ userID }) => userID === payload.userID)
+    users[index] = payload
+  }
 }
 
-const updateUsers = (state, payload) => {
-  payload.sort((a, b) => {
+const updateUsers = (draft, payload) => {
+  const users = [...payload]
+  users.sort((a, b) => {
     if (a.self) return -1
     if (b.self) return 1
     if (a.username < b.username) return -1
     return a.username > b.username ? 1 : 0
   })
 
-  return { ...state, users: payload }
+  draft.users = payload
 }
 
-const receiveMessage = (state, payload) => {
-  const { users, selectedUser } = state
+const receiveMessage = (draft, payload) => {
   const { content, from } = payload
+  const { selectedUser, users } = draft
 
-  const sender = users.find(({ userID }) => userID === from)
+  const index = users.findIndex((user) => user.userID === from)
+  const sender = users[index]
 
   if (!sender.messages) {
     sender.messages = []
   }
 
-  sender.messages.push({
+  const message = {
     content,
     fromSelf: false,
-  })
+  }
+
+  sender.messages.push(message)
 
   if (!selectedUser || sender.userID !== selectedUser.userID) {
     sender.hasNewMessages = true
-  }
-
-  return {
-    ...state,
-    users: users
-      .filter(({ userID }) => userID !== sender.userID)
-      .concat(sender),
+  } else {
+    draft.selectedUser.messages.push(message)
   }
 }

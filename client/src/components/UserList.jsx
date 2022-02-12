@@ -16,7 +16,7 @@ function UserList() {
 }
 
 function User(props) {
-  const { username, self } = props
+  const { username, self, hasNewMessages } = props
 
   const { dispatch } = useStore()
 
@@ -24,11 +24,23 @@ function User(props) {
     <div
       className={`p-4 border-white border-b border-opacity-30 cursor-pointer hover:bg-gray-800`}
       onClick={() =>
-        dispatch({ type: 'updateSelectedUser', payload: self ? null : props })
+        dispatch({
+          type: 'updateSelectedUser',
+          payload: self ? null : { ...props, hasNewMessages: false },
+        })
       }
     >
-      <span className="text-lg">{username}</span>
-      {self && <span>&nbsp;(me)</span>}
+      <div>
+        <span className="text-lg">{username}</span>
+        {self && <span>&nbsp;(me)</span>}
+        {hasNewMessages && (
+          <span className="text-red-500 text-sm float-right">new</span>
+        )}
+      </div>
+      <div className="text-gray-300">
+        <i className="bg-green-300 inline-block w-2 h-2 rounded-full mr-2" />
+        online
+      </div>
     </div>
   )
 }

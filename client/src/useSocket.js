@@ -21,11 +21,15 @@ const useSocket = (context) => {
     })
 
     socket.on('users', (users) => {
-      users.forEach((user) => {
-        user.self = user.userID === socket.id
+      const payload = [...users]
+
+      payload.forEach((user) => {
+        if (user.userID === socket.id) {
+          user.self = true
+        }
       })
 
-      dispatch({ type: 'updateUsers', payload: users })
+      dispatch({ type: 'updateUsers', payload })
     })
 
     socket.on('user connected', (user) => {
@@ -37,7 +41,7 @@ const useSocket = (context) => {
     })
 
     return () => {
-      socket.offAny()
+      socket.removeAllListeners()
     }
   }, [dispatch, users])
 
@@ -45,6 +49,10 @@ const useSocket = (context) => {
     if (username) {
       socket.auth = { username }
       socket.connect()
+    }
+
+    return () => {
+      socket.disconnect()
     }
   }, [username])
 }

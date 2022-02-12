@@ -34,6 +34,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('private message', ({ content, to }) => {
+    console.log('private message', to)
     socket.to(to).emit('private message', {
       content,
       from: socket.id,
@@ -49,7 +50,6 @@ io.use((socket, next) => {
   }
 
   socket.username = username
-  console.log(socket.handshake.time)
   next()
 })
 
