@@ -3,12 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.2",
+    "ioredis": "^4.28.5",
     "socket.io": "^4.4.1"
   }
 }

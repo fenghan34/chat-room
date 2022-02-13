@@ -4,14 +4,14 @@ function UserList() {
   const { users } = useStore()
 
   return (
-    <>
+    <div className="h-full flex flex-col">
       <div className="text-xl font-bold text-green-400 p-4">Online Users</div>
-      <div className="text-white">
+      <div className="text-white flex-1 overflow-y-auto">
         {users.map((user) => (
           <User key={user.userID} {...user} />
         ))}
       </div>
-    </>
+    </div>
   )
 }
 
